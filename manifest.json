@@ -1,0 +1,45 @@
+{
+   "action": {
+      "default_icon": {
+         "128": "icons/icon128.png",
+         "16": "icons/icon16.png",
+         "48": "icons/icon48.png"
+      },
+      "default_popup": "src/popup/popup.html"
+   },
+   "background": {
+      "service_worker": "src/background/background.js"
+   },
+   "content_scripts": [ {
+      "js": [ "src/page/pageInject.js" ],
+      "matches": [ "https://chat.openai.com/*", "https://chatgpt.com/*" ],
+      "run_at": "document_start"
+   }, {
+      "js": [ "src/page/wasmLoader.js", "src/page/mainWorld.js" ],
+      "matches": [ "https://chat.openai.com/*", "https://chatgpt.com/*" ],
+      "run_at": "document_start",
+      "world": "MAIN"
+   }, {
+      "js": [ "src/content/index.js" ],
+      "matches": [ "https://chat.openai.com/*", "https://chatgpt.com/*" ],
+      "run_at": "document_idle"
+   } ],
+   "description": "Stop browser freezing and lag in long ChatGPT conversations. Instantly speeds up the entire UI and reduces memory usage.",
+   "host_permissions": [ "https://chat.openai.com/*", "https://chatgpt.com/*" ],
+   "icons": {
+      "128": "icons/icon128.png",
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhFJQZe+gXFQyeEFrAXXFZvRPxtJaiO6WlwCETNBhL+F29tCpbUPHN/VUHun8OljnurxLEZi+VdNQDFOWwH6sYpsMgBOH5iKkwjrGV+Aj2nmr9X+vHFPjNpZL1KTFwy0gcuhx6WIiKNpPTyunyEo4iFcUlV5BULY083n5Slm1PStyruUwFSeR2BKeyWTApGFNIHtS2/xWFWrQNpMEJBUBPjXHrQes/Lcu8B44xW6ngrmYYnZsjFOLz2O27l1BgHC4ikDNqr92/zOyYJLPMpYYfDebgR8aKZK8mkvIlwHksmdRsjxEeLoiGIf+UFkzpYGyPu6OUt4dXpEktYDJ0TBhQwIDAQAB",
+   "manifest_version": 3,
+   "name": "Speed Booster for ChatGPT – Fix Lag & Freezing in Long Chats",
+   "optional_host_permissions": [ "https://api.freemius.com/*" ],
+   "permissions": [ "storage", "activeTab" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "2.1.5",
+   "web_accessible_resources": [ {
+      "matches": [ "https://chatgpt.com/*", "https://chat.openai.com/*" ],
+      "resources": [ "src/wasm/build/trimmer.wasm", "src/page/wasmLoader.js" ]
+   } ]
+}

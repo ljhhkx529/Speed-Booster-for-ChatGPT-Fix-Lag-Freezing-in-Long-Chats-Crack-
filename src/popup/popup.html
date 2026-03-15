@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Speed Booster for ChatGPT</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+
+<body>
+  <div class="popup-root" id="mainView">
+    <header class="header">
+      <div class="header-title">
+        <span>Speed Booster for ChatGPT</span>
+        <span id="headerProBadge" class="header-pro-badge" style="display: none;">PRO</span>
+        <span id="headerTrialBadge" class="header-trial-badge" style="display: none;">TRIAL</span>
+        <span id="headerFreeBadge" class="header-free-badge" style="display: none;">FREE</span>
+      </div>
+      <div class="header-subtitle">Fix lag & freezing in long chats</div>
+      <div class="header-privacy"
+        style="font-size: 10px; font-style: italic; opacity: 1; font-weight: 800; margin-top: 2px;">100%
+        Privacy, 100% Local, NO tracking</div>
+      <div style="margin-top: 5px; text-align: center;">
+        <a href="https://gptspeedbooster.com/status" target="_blank"
+          style="font-size: 10px; color: rgba(255,255,255,0.65); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.3);">
+          ⚠️ Extension not working? Check status →
+        </a>
+      </div>
+      <div id="legacyInfo" style="display: none; margin-top: 4px; text-align: center;">
+        <span class="legacy-tooltip-trigger"
+          style="font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.9); text-decoration: underline; cursor: help;"
+          data-tooltip="You received PRO for free as one of the first 10.000 users - this means you have unlimited speed boosts! Important: You will lose this status if you uninstall the extension.">
+          Why do I have PRO for free?
+        </span>
+      </div>
+    </header>
+
+
+    <div class="stats-grid">
+      <!-- Memory Saved Card -->
+      <div class="stat-card new-layout">
+        <div class="stat-icon-wrapper style-blue">
+          <span class="stat-icon">⚡</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value-big" id="statMemorySaved">0%</div>
+          <div class="stat-label-small">Memory Saved</div>
+        </div>
+      </div>
+
+      <!-- Rendered/Total Card -->
+      <div class="stat-card new-layout centered-stat">
+        <div class="stat-content">
+          <div class="stat-value-big" id="statRenderedTotal">0/0</div>
+          <div class="stat-label-small">Rendered</div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="settings-card">
+      <div class="setting-row">
+        <div class="setting-text">
+          <div class="setting-title">Enable Speed Booster</div>
+
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleEnabled" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- PRO Setting: Disable Notifications -->
+      <div class="setting-row" id="settingDisableNotifications" style="display: none;">
+        <div class="setting-text">
+          <div class="setting-title">Hide Notifications</div>
+          <div class="setting-description">
+            Don't show the "Speed Booster Active" notifications.
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleDisableNotifications" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-col">
+        <div class="setting-header-row">
+          <div class="setting-title">Messages to Show</div>
+
+          <div class="input-wrapper-compact">
+            <input type="number" id="messageLimit" class="number-input-compact" min="1" max="100" value="10" />
+          </div>
+        </div>
+
+        <div class="setting-description-small">
+          Keep between 10–20 for maximum speed. Higher values may slow down the chat. </div>
+      </div>
+
+      <div class="setting-row action-row hidden">
+        <button id="refreshBtn" class="refresh-btn">
+          <span>💾</span> Save Settings
+        </button>
+      </div>
+    </div>
+
+    <!-- Support section - shown based on user type -->
+    <!-- Legacy users see the donate card -->
+    <div id="donateSection" style="display: none;">
+      <div class="section-title">SUPPORT THE DEVELOPER!</div>
+      <a href="https://ko-fi.com/bgsn48" target="_blank" class="support-card donate-card">
+        <div class="support-icon">🍺</div>
+        <div class="support-text">
+          <div class="support-title">Love the extension?</div>
+          <div class="support-desc">Support the development.
+            </br>
+            <b><u>Buy me a beer!</u> 🍺</b>
+          </div>
+        </div>
+        <div class="support-arrow">→</div>
+      </a>
+    </div>
+
+    <!-- Trial/Free users see the buy pro card -->
+    <div id="buyProSection" style="display: none;">
+      <div class="settings-card quota-card">
+        <!-- New Header Strip -->
+        <div class="quota-header-strip">
+          <span>UNLOCK UNLIMITED USAGE</span>
+        </div>
+
+        <!-- Quota Progress for Free Users -->
+        <div id="quotaSection" style="display: none;">
+          <div class="stat-label" style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span id="quotaLabel" style="font-size: 11px; font-weight: 600; color: #64748b;">DAILY SPEED BOOSTED
+              PROMPTS</span>
+            <span id="quotaCount" style="color: #64748b; font-weight: 600;">0 / 30</span>
+          </div>
+          <div class="progress-bar-container"
+            style="background: rgba(0, 0, 0, 0.05); height: 16px; border-radius: 4px; overflow: hidden; position: relative;">
+            <div id="quotaFill"
+              style="background: linear-gradient(90deg, #ef4444, #dc2626); width: 0%; height: 100%; transition: width 0.3s ease;">
+            </div>
+            <div id="quotaOverlayText"
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 9px; pointer-events: none; opacity: 0; transition: opacity 0.3s ease;">
+              30 / 30
+            </div>
+          </div>
+          <div id="quotaDesc" style="font-size: 10px; color: #5a5e63; margin-top: 6px; text-align: center;">Optimizing
+            more than 30 new messages per day
+            in long chats requires Pro.</div>
+        </div>
+
+        <a href="#" class="support-card pro-card buy-pro-btn"
+          style="margin: 12px; margin-top: 0; justify-content: center;">
+          <div class="support-text" style="text-align: center;">
+            <div class="support-title">Upgrade to PRO</div>
+            <div class="support-desc">Unlimited fast prompts.
+              </br>
+              <b><u>Just $7.99 – One-time</u></b>
+            </div>
+          </div>
+        </a>
+
+        <!-- Manual License Entry Section -->
+        <div style="text-align: center; margin-bottom: 12px; padding: 0 12px;">
+          <div style="font-size: 10px; color: #64748b; margin-bottom: 6px; font-weight: 800;">Already have a licence
+            key?</div>
+          <button id="enterLicenseLink" style="
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #3b82f6;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+          ">Activate Licence Key</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pro Active section - for confirmed pro users -->
+    <div id="proActiveSection" style="display: none; padding: 12px 0; text-align: center;">
+      <div
+        style="font-size: 13px; font-weight: 700; color: #3cbe09; display: flex; align-items: center; justify-content: center; gap: 4px;">
+        <span>PRO Active</span>
+        <span style="font-size: 14px;">⚡</span>
+      </div>
+      <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">
+        Unlimited usage enabled
+      </div>
+    </div>
+
+
+    <div class="legal-disclaimer"
+      style="font-size: 10px; color: #666; text-align: center; padding: 10px; margin-top: 10px; opacity: 0.7; border-top: 1px solid rgba(255,255,255,0.05);">
+      <div id="donation-section-footer" class="donation-section" style="display: none; margin-bottom: 8px;">
+        <!-- Donation button will be injected here via JS -->
+      </div>
+      This extension is an independent project and is not affiliated with, endorsed by, or sponsored by OpenAI or
+      ChatGPT.
+      <div style="margin-top: 6px;">
+        <a href="https://gptspeedbooster.com/terms" target="_blank" style="color: #94a3b8; text-decoration: underline;">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MANUAL LICENSE ENTRY VIEW (Hidden by default) -->
+  <div id="licenseView"
+    style="display: none; padding: 16px 16px 12px; height: 100vh; box-sizing: border-box; background: #f5f5fb;">
+    <div style="margin-bottom: 20px;">
+      <button id="backToMainBtn"
+        style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b; padding: 0;">←
+        Back</button>
+    </div>
+
+    <div class="settings-card quota-card" style="margin-top: 0;">
+      <div class="quota-header-strip">
+        <span>ACTIVATE LICENSE</span>
+      </div>
+      <div style="padding: 16px;">
+        <div style="font-size: 11px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">
+          If you bought PRO in the past, you can manually activate it here. Your license key was sent to your email by
+          Freemius (Payment Processor).
+        </div>
+
+        <input type="text" id="licenseInput" placeholder="Enter your license key..." style="
+             width: 100%;
+             padding: 10px;
+             border: 1px solid #cbd5e1;
+             border-radius: 8px;
+             font-size: 13px;
+             margin-bottom: 12px;
+             box-sizing: border-box;
+             outline: none;
+           " />
+
+        <button id="activateLicenseBtn" class="refresh-btn"
+          style="width: 100%; justify-content: center; background: linear-gradient(135deg, #10b981, #059669);">
+          ACTIVATE
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popupConstants.js"></script>
+  <script src="popup.js"></script>
+</body>
+
+</html>
