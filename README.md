@@ -1,7 +1,7 @@
 # Speed Booster for ChatGPT – Reverse Engineering Notes
 
 ## Overview
-
+![Extension Icon](icons/icon128.png)
 This project contains the extracted source code of the Chrome extension **“Speed Booster for ChatGPT – Fix Lag & Freezing in Long Chats” (v2.1.5)**.
 
 The extension aims to improve the performance of long ChatGPT conversations by reducing DOM size, optimizing UI rendering, and trimming unnecessary content in the page.
